@@ -50,6 +50,19 @@ class Example extends Phaser.Scene
         });
 
         this.cameras.main.startFollow(this.player, true, 0.05, 0.05);
+
+
+        this.explosion = this.add.particles('plasma');
+
+        this.explosion.createEmitter({
+            frame: 0,
+            lifespan: 1000,
+            speedX: { min: -30, max: 30 },
+            speedY: { start: -30, end: 30 },
+            scale: { start: 0.3, end: 0.3 },
+            blendMode: 'ADD',
+            on: false,
+        });
     }
 
     update ()
@@ -66,8 +79,19 @@ class Example extends Phaser.Scene
         
         if (this.cursors.space.isDown)
         {
-            this.particles.emitParticleAt(this.player.x, this.player.y+350);
+            if (
+                Phaser.Math.Distance.Between(
+                    this.player.x,
+                    this.player.y,
+                    this.nave.x,
+                    this.nave.y
+                ) < 100
+            ) {
+                this.explosion.emitParticleAt(this.nave.x, this.nave.y);
+                this.nave.disableBody(true, true);
+            }
         }
+        
     
         this.arma.x= this.player.x;
         this.arma.y= this.player.y+400;
